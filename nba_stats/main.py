@@ -43,8 +43,10 @@ def get_stats():
         ppg = team['ppg']['avg']
         print(f"{i + 1}. {name} {nickname} - {ppg} PPG")
 
+
+get_scoreboard()
 get_stats()
-# get_scoreboard()
+
 
 
 
