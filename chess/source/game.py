@@ -6,6 +6,7 @@ from constants import *
 
 # Import needed classes 
 from board import Board
+from dragger import Dragger
 
 # This is the class that defines a chess game in our app
 
@@ -13,7 +14,8 @@ class Game:
 
     def __init__(self):
         self.board = Board()
-
+        self.dragger = Dragger()
+        
     # Show methods below here
 
     def show_bg(self, surface):
