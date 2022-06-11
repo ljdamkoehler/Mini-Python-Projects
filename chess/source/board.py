@@ -1,10 +1,10 @@
 # Import universal constants
-from tkinter.tix import ROW
 from constants import *
 
 # Import other needed classes 
 from square import Square
 from piece import *
+from move import Move 
 
 # This is the class that will represent the whole board and will have a ref to each individual square
 class Board:
@@ -15,6 +15,53 @@ class Board:
         self._create()
         self._add_pieces('white')
         self._add_pieces('black')
+
+    # This method will calculate all the valid moves for a given piece
+    def calc_moves(self, piece, row, col):
+
+        def knight_moves():
+            # There are 8 possible moves for a knight
+            possible_moves = [
+                (row-2, col+1),
+                (row-1, col+2),
+                (row+1, col+2),
+                (row+2, col+1),
+                (row+2, col-1),
+                (row+1, col-2),
+                (row-1, col-2),
+                (row-2, col-1)
+            ]
+
+            for possible_move in possible_moves:
+                possible_move_row, possible_move_col = possible_move
+
+                if Square.in_range(possible_move_row, possible_move_col):
+                    if self.squares[possible_move_row][possible_move_col].is_empty_or_rival(piece.color):
+                        # create squares for the move
+                        initial = Square(row, col)
+                        final = Square(possible_move_row, possible_move_col) # add piece here later 
+                        # craete a new move
+                        move = Move(initial, final)
+                        # Append a new valid move
+                        piece.add_move(move)
+        
+        if isinstance(piece, Pawn):
+            pass
+
+        elif isinstance(piece, Knight):
+            knight_moves()
+
+        elif isinstance(piece, Bishop):
+            pass
+
+        elif isinstance(piece, Rook):
+            pass
+
+        elif isinstance(piece, Queen):
+            pass
+
+        elif isinstance(piece, King):
+            pass
 
     # This method creates a board full of squares 
     def _create(self): #private method (only called inside Board class)
@@ -33,6 +80,8 @@ class Board:
         # This creates all the knights 
         self.squares[row_other][1] = Square(row_other, 1, Knight(color))
         self.squares[row_other][6] = Square(row_other, 6, Knight(color))
+        # Test knight
+        # self.squares[3][5] = Square(3, 5, Knight(color))
 
         # This creates all the bishops 
         self.squares[row_other][2] = Square(row_other, 2, Bishop(color))

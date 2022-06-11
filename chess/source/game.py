@@ -7,6 +7,7 @@ from constants import *
 # Import needed classes 
 from board import Board
 from dragger import Dragger
+from square import Square
 
 # This is the class that defines a chess game in our app
 
@@ -44,3 +45,18 @@ class Game:
                         img_center = col * SQSIZE + SQSIZE // 2, row * SQSIZE + SQSIZE // 2
                         piece.texture_rect = img.get_rect(center=img_center)
                         surface.blit(img, piece.texture_rect)
+   
+    def show_moves(self, surface):
+        if self.dragger.dragging:
+            piece = self.dragger.piece
+
+            # Looping through all valid moves for the piece being dragged 
+            for move in piece.moves:
+                # create color
+                color = '#C86464' if (move.final.row + move.final.col) % 2 == 0 else '#C84646'
+                # create a rect
+                rect = (move.final.col * SQSIZE, move.final.row * SQSIZE, SQSIZE, SQSIZE)
+                # blit
+                pygame.draw.rect(surface, color, rect)
+
+        
