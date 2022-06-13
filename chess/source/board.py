@@ -12,9 +12,35 @@ class Board:
     def __init__(self):
         self.squares = [[0, 0, 0, 0, 0, 0, 0, 0] for col in range(COLS)]
 
+        self.last_move = None
         self._create()
         self._add_pieces('white')
         self._add_pieces('black')
+
+    # This method moves the pices on the actual display
+    def move(self, piece, move):
+        initial = move.initial
+        final = move.final
+
+        # Update console board with move
+        self.squares[initial.row][initial.col].piece = None
+        self.squares[final.row][final.col].piece = piece
+
+        # Update moved attribute on piece
+        piece.moved = True
+
+        # Clear valid moves 
+        piece.clear_moves()
+
+        # Save last move
+        self.last_move = move
+
+    # This method determines whether a move a player is trying to make is allowed 
+    def valid_move(self, piece, move):
+        # print('valid move')
+        # print(move)
+        # print(piece.moves)
+        return move in piece.moves
 
     # This method will calculate all the valid moves for a given piece
     def calc_moves(self, piece, row, col):

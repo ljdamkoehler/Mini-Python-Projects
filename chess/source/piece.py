@@ -24,6 +24,9 @@ class Piece:
     def add_move(self, move):
         self.moves.append(move)
 
+    def clear_moves(self):
+        self.moves = []
+
 # Below are classes for each type of piece.
 # They will inherit from the main Piece 
 

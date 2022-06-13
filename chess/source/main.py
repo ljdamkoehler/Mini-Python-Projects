@@ -1,5 +1,4 @@
 # Importing needed modules 
-from turtle import update
 import pygame 
 import sys
 
@@ -8,6 +7,8 @@ from constants import *
 
 # Import needed classes 
 from game import Game
+from square import Square
+from move import Move
 
 # Main class for game 
 class Main:
@@ -70,7 +71,30 @@ class Main:
 
                 # User releasig piece on a new square
                 elif event.type == pygame.MOUSEBUTTONUP:
+                    
+                    if dragger.dragging:
+                        dragger.update_mouse(event.pos)
+
+                        released_row = dragger.mouseY // SQSIZE
+                        released_col = dragger.mouseX // SQSIZE
+
+                        # create possible move and check to see if it is valid
+
+                        initial = Square(dragger.initial_row, dragger.initial_col)
+                        final = Square(released_row, released_col)
+
+                        move = Move(initial, final)
+                        
+                        # print(board.valid_move(dragger.piece, move))
+                        if board.valid_move(dragger.piece, move):
+                            board.move(dragger.piece, move)
+                            # Show methods 
+                            game.show_bg(screen)
+                            game.show_pieces(screen)
+
                     dragger.undrag_piece()
+
+
 
                 #Allowing user to quit app if desired
                 elif event.type == pygame.QUIT:
