@@ -8,6 +8,7 @@ from constants import *
 from board import Board
 from dragger import Dragger
 from square import Square
+from config import Config
 
 # This is the class that defines a chess game in our app
 
@@ -18,20 +19,41 @@ class Game:
         self.hovered_sqr = None
         self.board = Board()
         self.dragger = Dragger()
+        self.config = Config()
 
     # Show methods below here
 
     def show_bg(self, surface):
+        theme = self.config.theme
+
         for row in range(ROWS):
             for col in range(COLS):
-                if (row + col) % 2 == 0:
-                    color = (234, 235, 200) #Light green on evens 
-                else:
-                    color = (119, 154, 88) #Dark green on odds
-                
+                # Create color
+                color = theme.bg.light if(row + col) % 2 == 0 else theme.bg.dark
+                # Create rect 
                 rect = (col * SQSIZE, row * SQSIZE, SQSIZE, SQSIZE)
-
+                # Blit
                 pygame.draw.rect(surface, color, rect)
+
+                # row coordinates 
+                if col == 0:
+                    # Create a new color
+                    color = theme.bg.dark if row % 2 == 0 else theme.bg.light
+                    # Create label
+                    label = self.config.font.render(str(ROWS-row), 1, color)
+                    label_pos = (5, 5 + row * SQSIZE)
+                    # Blit label
+                    surface.blit(label, label_pos)
+
+                # col coordinates 
+                if row == 7:
+                    # Create a new color
+                    color = theme.bg.dark if (row + col) % 2 == 0 else theme.bg.light
+                    # Create label
+                    label = self.config.font.render(Square.get_alpha_col(col), 1, color)
+                    label_pos = (col * SQSIZE + SQSIZE - 20, HEIGHT - 20)
+                    # Blit label
+                    surface.blit(label, label_pos)
 
     def show_pieces(self, surface):
         for row in range(ROWS):
@@ -49,19 +71,23 @@ class Game:
                         surface.blit(img, piece.texture_rect)
    
     def show_moves(self, surface):
+        theme = self.config.theme
+
         if self.dragger.dragging:
             piece = self.dragger.piece
 
             # Looping through all valid moves for the piece being dragged 
             for move in piece.moves:
                 # create color
-                color = '#C86464' if (move.final.row + move.final.col) % 2 == 0 else '#C84646'
+                color = theme.moves.light if (move.final.row + move.final.col) % 2 == 0 else theme.moves.dark
                 # create a rect
                 rect = (move.final.col * SQSIZE, move.final.row * SQSIZE, SQSIZE, SQSIZE)
                 # blit
                 pygame.draw.rect(surface, color, rect)
     
     def show_last_move(self, surface):
+        theme = self.config.theme
+
         # First see if there is a last move
         if self.board.last_move:
             initial = self.board.last_move.initial
@@ -69,7 +95,7 @@ class Game:
             
             for pos in [initial, final]:
                 # Color
-                color = (244, 247, 116) if (pos.row + pos.col) % 2 == 0 else (172, 195, 51)
+                color = theme.trace.light if (pos.row + pos.col) % 2 == 0 else theme.trace.dark
                 # Rect
                 rect = (pos.col * SQSIZE, pos.row * SQSIZE, SQSIZE, SQSIZE)
                 # Blit
@@ -91,3 +117,12 @@ class Game:
 
     def set_hover(self, row, col):
         self.hovered_sqr = self.board.squares[row][col]
+
+    def change_theme(self):
+        self.config.change_theme()
+
+    def sound_effect(self, captured=False):
+        if captured:
+            self.config.capture_sound.play()
+        else:
+            self.config.move_sound.play()
